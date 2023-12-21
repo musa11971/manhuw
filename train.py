@@ -2,6 +2,9 @@ import os
 import librosa
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report
 
 train_data_dir = 'audio'
 
@@ -28,7 +31,9 @@ def extract_features(file_name):
     # Computes the tonal centroid features (tonnetz)
     tonnetz = np.mean(librosa.feature.tonnetz(y=librosa.effects.harmonic(X),sr=sample_rate).T,axis=0)
 
-    return mfccs, chroma, mel, contrast, tonnetz
+    # Concatenate all feature arrays into a single 1D array
+    combined_features = np.hstack([mfccs, chroma, mel, contrast, tonnetz])
+    return combined_features
 
 # Get the list of all subdirectories in the training data directory
 sub_folders = [name for name in os.listdir(train_data_dir) if os.path.isdir(os.path.join(train_data_dir, name))]
@@ -59,4 +64,16 @@ for sub_folder in sub_folders:
 # Convert to a DataFrame
 df = pd.DataFrame(features_list)
 df['label'] = labels
-print(df)
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(df.iloc[:, :-1], df['label'], test_size=0.2, random_state=42)
+
+# Initialize the model
+model = RandomForestClassifier()
+
+# Train the model
+model.fit(X_train, y_train)
+
+# Evaluate the model
+predictions = model.predict(X_test)
+print(classification_report(y_test, predictions))
