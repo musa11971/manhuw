@@ -1,6 +1,7 @@
 import os
 import librosa
 import numpy as np
+import pandas as pd
 
 train_data_dir = 'audio'
 
@@ -33,6 +34,9 @@ def extract_features(file_name):
 sub_folders = [name for name in os.listdir(train_data_dir) if os.path.isdir(os.path.join(train_data_dir, name))]
 print(f'Found {len(sub_folders)} reciters')
 
+features_list = []
+labels = []
+
 # Loop through each subdirectory
 for sub_folder in sub_folders:
     print(f'starting {sub_folder}')
@@ -47,5 +51,12 @@ for sub_folder in sub_folders:
 
         # Extract features
         features = extract_features(file_mp3_full)
+        features_list.append(features)
+        labels.append(sub_folder)
 
     print('')
+
+# Convert to a DataFrame
+df = pd.DataFrame(features_list)
+df['label'] = labels
+print(df)
