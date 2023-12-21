@@ -37,14 +37,15 @@ def extract_features(file_name):
 
 # Get the list of all subdirectories in the training data directory
 sub_folders = [name for name in os.listdir(train_data_dir) if os.path.isdir(os.path.join(train_data_dir, name))]
-print(f'Found {len(sub_folders)} reciters')
+reciter_count = len(sub_folders)
+print(f'Found {reciter_count} reciters')
 
 features_list = []
 labels = []
 
 # Loop through each subdirectory
-for sub_folder in sub_folders:
-    print(f'starting {sub_folder}')
+for index, sub_folder in enumerate(sub_folders):
+    print(f'starting {sub_folder} {index+1}/{reciter_count}')
     sub_folder_full = os.path.join(train_data_dir, sub_folder)
     files = os.listdir(sub_folder_full)
     files_mp3 = [file for file in files if file.endswith('.mp3')]
