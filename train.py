@@ -1,7 +1,8 @@
+import os
 import librosa
 import numpy as np
 
-filename = 'audio/islam_sobhi/mulk.mp3'
+train_data_dir = 'audio'
 
 def extract_features(file_name):
     # Loads the audio file as a floating point time series and assigns the default sample rate
@@ -24,9 +25,27 @@ def extract_features(file_name):
     contrast = np.mean(librosa.feature.spectral_contrast(S=stft, sr=sample_rate).T,axis=0)
 
     # Computes the tonal centroid features (tonnetz)
-    tonnetz = np.mean(librosa.feature.tonnetz(y=librosa.effects.harmonic(X),
-    sr=sample_rate).T,axis=0)
+    tonnetz = np.mean(librosa.feature.tonnetz(y=librosa.effects.harmonic(X),sr=sample_rate).T,axis=0)
 
-    return mfccs, chroma, mel, contrast, tonnetz, filename
+    return mfccs, chroma, mel, contrast, tonnetz
 
-print(extract_features(filename))
+# Get the list of all subdirectories in the training data directory
+sub_folders = [name for name in os.listdir(train_data_dir) if os.path.isdir(os.path.join(train_data_dir, name))]
+print(f'Found {len(sub_folders)} reciters')
+
+# Loop through each subdirectory
+for sub_folder in sub_folders:
+    print(f'starting {sub_folder}')
+    sub_folder_full = os.path.join(train_data_dir, sub_folder)
+    files = os.listdir(sub_folder_full)
+    files_mp3 = [file for file in files if file.endswith('.mp3')]
+
+    # Loop through each .mp3 file
+    for file_mp3 in files_mp3:
+        print(f'├─ {file_mp3}')
+        file_mp3_full = os.path.join(train_data_dir, sub_folder, file_mp3)
+
+        # Extract features
+        features = extract_features(file_mp3_full)
+
+    print('')
