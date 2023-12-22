@@ -1,11 +1,24 @@
 import librosa
 import numpy as np
+import noisereduce as nr
 
-def extract_features(file_name):
-    # Loads the audio file as a floating point time series and assigns the default sample rate
-    # Sample rate is set to 22050 by default
-    X, sample_rate = librosa.load(file_name, res_type='kaiser_fast')
+default_sample_rate=22050
 
+def load(file_name, skip_seconds=0):
+    return librosa.load(file_name, sr=None, res_type='kaiser_fast')
+
+def preprocess_audio(audio_data, rate):
+    # Apply preprocessing steps
+    audio_data = nr.reduce_noise(y=audio_data, sr=rate)
+    audio_data = librosa.util.normalize(audio_data)
+    audio_data, _ = librosa.effects.trim(audio_data)
+    audio_data = librosa.resample(audio_data, orig_sr=rate, target_sr=default_sample_rate)
+#     audio_data = fix_length(audio_data)
+    rate = default_sample_rate
+
+    return audio_data, rate
+
+def extract_features(X, sample_rate):
     # Generate Mel-frequency cepstral coefficients (MFCCs) from a time series
     mfccs = np.mean(librosa.feature.mfcc(y=X, sr=sample_rate, n_mfcc=40).T,axis=0)
 

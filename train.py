@@ -6,7 +6,7 @@ import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
-from shared.manhuw import extract_features
+from shared.manhuw import extract_features, load, preprocess_audio
 
 train_data_dir = 'audio'
 
@@ -20,7 +20,7 @@ labels = []
 
 # Loop through each subdirectory
 for index, sub_folder in enumerate(sub_folders):
-    print(f'starting {sub_folder} {index+1}/{reciter_count}')
+    print(f'training with {sub_folder} {index+1}/{reciter_count}')
     sub_folder_full = os.path.join(train_data_dir, sub_folder)
     files = os.listdir(sub_folder_full)
     files_mp3 = [file for file in files if file.endswith('.mp3')]
@@ -30,8 +30,17 @@ for index, sub_folder in enumerate(sub_folders):
         print(f'├─ {file_mp3}')
         file_mp3_full = os.path.join(train_data_dir, sub_folder, file_mp3)
 
+        # Load file, with 5 seconds offset to avoid basmallah
+        print('   loading...')
+        audio_data, sr = load(file_mp3_full, skip_seconds=5)
+
+        # Preprocess data
+        print('   preprocessing...')
+        audio_data, sr = preprocess_audio(audio_data, sr)
+
         # Extract features
-        features = extract_features(file_mp3_full)
+        print('   extracting...')
+        features = extract_features(audio_data, sr)
         features_list.append(features)
         labels.append(sub_folder)
 
