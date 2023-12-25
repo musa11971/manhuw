@@ -1,0 +1,8 @@
+joblib==1.3.2
+librosa==0.10.1
+noisereduce==3.0.0
+numpy==1.26.2
+pandas==2.1.4
+scikit-learn==1.3.2
+scipy==1.11.4
+sounddevice==0.4.6
