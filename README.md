@@ -62,6 +62,12 @@ python3 predict.py
 ['muhammad_al_lohaidan']
 ```
 
+### Known caveats
+- **Recording Quality Variance**: The model's performance is highly dependent on the quality of the input audio. Recordings made in non-studio environments, especially those with background noise or of lower quality, may not be recognized as accurately.
+- **Data Limitations**: The training dataset primarily comprises studio-quality recitations. Therefore, the model may not perform as well with live recordings or recitations captured from less controlled environments.
+- **Format Differences**: While the model has been trained on MP3 format, differences in audio file formats (e.g., WAV vs. MP3) might slightly affect the model's prediction accuracy due to variations in compression and audio quality.
+- **Length of Recordings**: The model is optimized for shorter audio clips. Longer recordings, especially those with varying styles or multiple reciters, might not be identified as effectively.
+
 ### Contributing
 All contributions are welcomed.
 
